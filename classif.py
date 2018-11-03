@@ -92,7 +92,9 @@ if __name__ == "__main__":
 	avgVector = averageLearningVector(train_data)
 
 	end = time.time()
-	end /= 60
+
+	end = end - start
+	end = end/60
 	print("--Classif.py: Time taken: ")
 	print(end)
 	
