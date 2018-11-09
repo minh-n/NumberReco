@@ -51,9 +51,9 @@ def highPassFilter(picture):
 
 def gradient(picture):
 	colors = np.shape(picture)[2]
-	kernel = np.array([[ -3-3j, 0-10j,  +3 -3j],
-                       [-10+0j, 0+ 0j, +10 +0j],
-                       [ -3+3j, 0+10j,  +3 +3j]])
+	kernel = np.array([[ -3-3j, 0-10j,  +3-3j],
+                       [-10+0j, 0+ 0j, +10+0j],
+                       [ -3+3j, 0+10j,  +3+3j]])
 
 	for c in range(colors):
 		picture[:, :, c] = signal.convolve2d(picture[:, :, c], kernel,  boundary='symm', mode='same')
@@ -88,7 +88,7 @@ def contrast(picture):
 	for i in range(lines):
 		for j in range(columns):
 			for c in range(colors):
-				picture[i, j, c] = 0 if picture[i, j, c] < 30 else (255 if picture[i, j, c] > 225 else ((255/195)*(picture[i, j, c] - 30) + 0.5))
+				picture[i, j, c] = 0 if picture[i, j, c] < 50 else (255 if picture[i, j, c] > 225 else ((255/195)*(picture[i, j, c] - 50) + 0.5))
 
 def imageProcessing(data, filter, setting=None):
 	if setting is None:
@@ -101,18 +101,21 @@ def imageProcessing(data, filter, setting=None):
 
 if __name__ == "__main__":
 	
-	# index = 1
-	# plt.imshow(train_data['X'][:, :, :, index])
+	index = 565
+	plt.imshow(train_data['X'][:, :, :, index])
+	plt.show()
 	# negative(train_data['X'][:, :, :, index])
-	# grey(train_data['X'][:, :, :, index])
+	grey(train_data['X'][:, :, :, index])
 	# thresholding(train_data['X'][:, :, :, index])
 	# lowPassFilter(train_data['X'][:, :, :, index])
 	# highPassFilter(train_data['X'][:, :, :, index])
 	# gradient(train_data['X'][:, :, :, index])
 	# sobelFilter(train_data['X'][:, :, :, index])
-	# brightness(train_data['X'][:, :, :, index], 40)
-	# contrast(train_data['X'][:, :, :, index])
+	brightness(train_data['X'][:, :, :, index], 80)
+	contrast(train_data['X'][:, :, :, index])
 	# plt.imshow(train_data['X'][:, :, :, index])
 
-	imageProcessing(train_data, brightness, setting=40)
-	plt.imshow(train_data['X'][:, :, :, 1])
+	# imageProcessing(train_data, contrast)
+	plt.imshow(train_data['X'][:, :, :, index])
+
+	plt.show()

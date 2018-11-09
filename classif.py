@@ -20,4 +20,4 @@ if __name__ == "__main__":
 		with loadmat(args.data) as data:
 			print("TODO")
 	except (IOError, OSError) as error:
-		sys.stderr.write(error.strerror)
+		sys.stderr.write(error.strerror + "\n")
