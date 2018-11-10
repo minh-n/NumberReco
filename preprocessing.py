@@ -90,6 +90,28 @@ def contrast(picture):
 			for c in range(colors):
 				picture[i, j, c] = 0 if picture[i, j, c] < 50 else (255 if picture[i, j, c] > 225 else ((255/195)*(picture[i, j, c] - 50) + 0.5))
 
+def sum(histogram, k):
+	result = 0
+	for i in range(k):
+		result += histogram[i]
+	return result
+
+def histogramEqualization(picture):
+	(lines, columns, colors) = np.shape(picture)
+	histogram = np.zeros(256)
+	grey(picture)
+
+	for i in range(lines):
+		for j in range(columns):
+			for c in range(colors):
+				histogram[picture[i, j, c]] += 1
+
+	constant = (256 - 1)/(lines * columns)
+	for i in range(lines):
+		for j in range(columns):
+			for c in range(colors):
+				picture[i, j, c] = constant * sum(histogram, picture[i, j, c])
+
 def imageProcessing(data, filter, setting=None):
 	if setting is None:
 		for i in range(len(train_data['y'])):
@@ -101,21 +123,19 @@ def imageProcessing(data, filter, setting=None):
 
 if __name__ == "__main__":
 	
-	index = 565
-	plt.imshow(train_data['X'][:, :, :, index])
-	plt.show()
+	index = 1
+	# plt.imshow(train_data['X'][:, :, :, index])
+	# plt.show()
 	# negative(train_data['X'][:, :, :, index])
-	grey(train_data['X'][:, :, :, index])
+	# grey(train_data['X'][:, :, :, index])
 	# thresholding(train_data['X'][:, :, :, index])
 	# lowPassFilter(train_data['X'][:, :, :, index])
 	# highPassFilter(train_data['X'][:, :, :, index])
 	# gradient(train_data['X'][:, :, :, index])
 	# sobelFilter(train_data['X'][:, :, :, index])
-	brightness(train_data['X'][:, :, :, index], 80)
-	contrast(train_data['X'][:, :, :, index])
-	# plt.imshow(train_data['X'][:, :, :, index])
-
+	# brightness(train_data['X'][:, :, :, index], 80)
+	# contrast(train_data['X'][:, :, :, index])
 	# imageProcessing(train_data, contrast)
+	histogramEqualization(train_data['X'][:, :, :, index])
 	plt.imshow(train_data['X'][:, :, :, index])
-
-	plt.show()
+	# plt.show()
