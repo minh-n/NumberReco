@@ -2,14 +2,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
 import time 
+import preprocessing as pre
 
-print("--Classif.py: starting program")
-print("--Classif.py: loading train data")
+
+# Loading the datasets
+print("--dmin.py: starting program")
+print("--dmin.py: loading train data")
 
 train_data = loadmat('train_32x32.mat')
 test_data = loadmat('test_32x32.mat')
 
+# Applying pre-processing to the data
+pre.imageProcessing(train_data, pre.histogramEqualization)
+pre.imageProcessing(test_data, pre.histogramEqualization)
+
+
 def averageLearningVector(data):
+
+	print("--averageLearningVector: start")
+
 	avgVector = {}
 
 	allVectorClass1 = []
@@ -44,7 +55,7 @@ def averageLearningVector(data):
 		if len(allVector[i]) != 0:
 			avgVector[i+1] = np.average(allVector[i], axis=0)
 
-	print("--averageLearningVector: fin calcul")
+	print("--averageLearningVector: end")
 
 	return avgVector
 
@@ -73,11 +84,12 @@ if __name__ == "__main__":
 	
 	start = time.time()
 
-	print("--Classif.py: Starting learning vector")
+	print("--dmin.py: Starting to compute learning vector")
 	
 	success = minimumDistanceClassifier(test_data, train_data)
+	successPercentage =  100*success/len(test_data["y"])
 
-	print("\nSuccess rate : " + str(success) + " / " + str(len(test_data["y"])) + " (" + str(success * 100/len(test_data["y"])) + "%)")
+	print("\n--dmin.py: Success rate : " + str(success) + " / " + str(len(test_data["y"])) + " (" + str(successPercentage) + "%)")
 	#print("Success rate : %d / %d  (%0.2f \%)" % (success, len(test_data["y"]), success * 100/len(test_data["y"])))
 	#classes = initializeClasses(train_data)
 
@@ -85,6 +97,6 @@ if __name__ == "__main__":
 
 	end = end - start
 	end = end/60
-	print("--Classif.py: Time taken: ")
+	print("--dmin.py: Time taken: ")
 	print(end)
 	

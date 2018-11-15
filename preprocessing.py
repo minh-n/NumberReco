@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.io import loadmat
 from scipy import signal
 
-train_data = loadmat('train_32x32.mat')
+#train_data = loadmat('train_32x32.mat')
 #test_data = loadmat('test_32x32.mat')
 
 def negative(picture):
@@ -113,29 +113,32 @@ def histogramEqualization(picture):
 				picture[i, j, c] = constant * sum(histogram, picture[i, j, c])
 
 def imageProcessing(data, filter, setting=None):
+	print("--preprocessing.py: processing dataset with {}".format(filter))
 	if setting is None:
-		for i in range(len(train_data['y'])):
+		for i in range(len(data['y'])):
+			#print("Processing {}...".format(i))
 			filter(data['X'][:, :, :, i])
 	else:
-		for i in range(len(train_data['y'])):
+		for i in  range(len(data['y'])):
+			#print("Processing {}...".format(i))
 			filter(data['X'][:, :, :, i], setting)
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 	
-	index = 1
-	# plt.imshow(train_data['X'][:, :, :, index])
-	# plt.show()
-	# negative(train_data['X'][:, :, :, index])
-	# grey(train_data['X'][:, :, :, index])
-	# thresholding(train_data['X'][:, :, :, index])
-	# lowPassFilter(train_data['X'][:, :, :, index])
-	# highPassFilter(train_data['X'][:, :, :, index])
-	# gradient(train_data['X'][:, :, :, index])
-	# sobelFilter(train_data['X'][:, :, :, index])
-	# brightness(train_data['X'][:, :, :, index], 80)
-	# contrast(train_data['X'][:, :, :, index])
-	# imageProcessing(train_data, contrast)
-	histogramEqualization(train_data['X'][:, :, :, index])
-	plt.imshow(train_data['X'][:, :, :, index])
-	# plt.show()
+# 	index = 1
+# 	# plt.imshow(train_data['X'][:, :, :, index])
+# 	# plt.show()
+# 	# negative(train_data['X'][:, :, :, index])
+# 	# grey(train_data['X'][:, :, :, index])
+# 	# thresholding(train_data['X'][:, :, :, index])
+# 	# lowPassFilter(train_data['X'][:, :, :, index])
+# 	# highPassFilter(train_data['X'][:, :, :, index])
+# 	# gradient(train_data['X'][:, :, :, index])
+# 	# sobelFilter(train_data['X'][:, :, :, index])
+# 	# brightness(train_data['X'][:, :, :, index], 80)
+# 	# contrast(train_data['X'][:, :, :, index])
+# 	# imageProcessing(train_data, contrast)
+# 	histogramEqualization(train_data['X'][:, :, :, index])
+# 	plt.imshow(train_data['X'][:, :, :, index])
+# 	# plt.show()
