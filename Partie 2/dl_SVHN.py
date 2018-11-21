@@ -22,6 +22,7 @@ class CNN(nn.Module):
             x = F.relu(self.fc1(x))
             x = F.log_softmax(self.fc2(x), dim=1)
 
+            # on peut print les x
             return x
 
 
@@ -52,7 +53,7 @@ if __name__ == '__main__':
         print("Epoch", e)
         for i in range(0, train_data.shape[0], batch_size):
             optimizer.zero_grad() # Reset all gradients to 0
-            predictions_train = net(train_data[i:i+batch_size])
+            predictions_train = net(train_data[i:i+batch_size]) #appel a forward()
             _, class_predicted = torch.max(predictions_train, 1)
             loss = F.nll_loss(predictions_train, train_label[i:i+batch_size])
             loss.backward()
