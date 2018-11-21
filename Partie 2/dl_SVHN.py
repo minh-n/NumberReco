@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from scipy.io import loadmat
-torch.manual_seed(0)
+torch.manual_seed(0) #on set le seed a 0, pas de random
 
 class CNN(nn.Module):
 
@@ -25,7 +25,6 @@ class CNN(nn.Module):
             # on peut print les x
             return x
 
-
 if __name__ == '__main__':
 
     # Load the dataset
@@ -44,17 +43,38 @@ if __name__ == '__main__':
 
     # Hyperparameters
     epoch_nbr = 10
-    batch_size = 10
-    learning_rate = 1e1
-
+    batch_size = 10     #pas bcp de changements ?
+    learning_rate = 1e1 #1*10^1 ? Il faut changer le learning rate. Si on ne change pas, 
+                        #le loss est de 1,17 a l'ite 1, NaN a l'iteration 3 alors qu'il est cense diminuer
+                        #le learning rate est trop grand, il faut le baisser a genre 0.001
     net = CNN()
     optimizer = optim.SGD(net.parameters(), lr=learning_rate)
     for e in range(epoch_nbr):
+
         print("Epoch", e)
+
         for i in range(0, train_data.shape[0], batch_size):
+
             optimizer.zero_grad() # Reset all gradients to 0
+
             predictions_train = net(train_data[i:i+batch_size]) #appel a forward()
+
             _, class_predicted = torch.max(predictions_train, 1)
+
             loss = F.nll_loss(predictions_train, train_label[i:i+batch_size])
+
             loss.backward()
+
             optimizer.step() # Perform the weights update
+
+
+
+
+
+
+
+
+
+
+
+#augmenter le nb de donnees pour qu'il ne s'habitude pas aux donnees
