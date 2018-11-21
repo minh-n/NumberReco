@@ -13,28 +13,32 @@ train_data = loadmat('train_32x32.mat')
 test_data = loadmat('test_32x32.mat')
 
 # Applying pre-processing to the data
-#pre.imageProcessing(train_data, pre.histogramEqualization)
-#pre.imageProcessing(test_data, pre.histogramEqualization)
+#pre.imageProcessing(train_data, pre.contrast)
+#pre.imageProcessing(test_data, pre.contrast)
 
-#learning function
+#learning function : appends every images into separate lists
+#and computes the average of the class
 def averageLearningVector(data):
 
 	print("\n--averageLearningVector: start")
 
 	avgVector = {}
-	allClassVectors = []
+	allClassVectors = [[] for i in range(10)] #create 10 lists for the 10 classes
 
-	for i in range(10):
-		allClassVectors.append([])
 
+	#putting the images into their own class depending on their label
+	#time : approx. 0.35s 
 	for i in range(len(data['y'])):
-		for j in range(1, 11):
-			if data['y'][i] == j:
-				allClassVectors[j-1].append(data['X'][:, :, :, i])
+		allClassVectors[data['y'][i]-1].append(data['X'][:, :, :, i])
 
+
+	#computing the average of the vectors
 	for i in range(10):
 		if len(allClassVectors[i]) != 0:
-			avgVector[i+1] = np.average(allClassVectors[i], axis=0)
+			print("Yes!")
+			avgVector[i+1] = np.mean(allClassVectors[i], axis=0)
+
+
 
 	print("--averageLearningVector: end")
 
@@ -70,14 +74,17 @@ def minimumDistanceClassifier(test, train):
 
 if __name__ == "__main__":
 	
-	start = time.time()
-
+	
 	print("--dmin.py: Starting to compute learning vector")
 	
-	success = minimumDistanceClassifier(test_data, train_data)
-	successPercentage =  100*success/len(test_data["y"])
+	start = time.time()
 
-	print("\n--dmin.py: Success rate : " + str(success) + " / " + str(len(test_data["y"])) + " (" + str(successPercentage) + "%)")
+	success = minimumDistanceClassifier(test_data, train_data)
+	successPercentage =  100.*success/len(test_data["y"])
+
+	print("\n--dmin.py: Success rate : " + str(success) + " / " 
+		+ str(len(test_data["y"])) + 
+		" (" + str(successPercentage) + "%)")
 	#classes = initializeClasses(train_data)
 
 	end = time.time()

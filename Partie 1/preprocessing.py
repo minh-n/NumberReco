@@ -116,7 +116,7 @@ def imageProcessing(data, filter, setting=None):
 	print("--preprocessing.py: processing dataset with {}".format(filter))
 	if setting is None:
 		for i in range(len(data['y'])):
-			#print("Processing {}...".format(i))
+			print("Processing {}...".format(i))
 			filter(data['X'][:, :, :, i])
 	else:
 		for i in  range(len(data['y'])):
