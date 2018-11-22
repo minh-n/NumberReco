@@ -6,48 +6,26 @@ import preprocessing as pre
 import pickle
 
 # ---------------------------------
-# Loading the datasets 
+# Loading the test dataset saved by pickle. 
+# The train dataset is already processed and will be loaded later 
 # time taken: approx. 2s
 print("dmin.py: starting program\ndmin.py: loading train data")
-train_data = loadmat('train_32x32.mat')
-test_data = loadmat('test_32x32.mat')
 
+# Loading the data (saved by pickle)
+test_data = pickle.load(open("pre_test_mat.pck", "rb"))
 
-# Applying pre-processing to the data
-# time taken : approx. 1mn for 1000 images, so 100 minutes in total
-#pre.imageProcessing(train_data, pre.contrast)
-#pre.imageProcessing(test_data, pre.contrast)
-# ---------------------------------
-
-
+# Applying pre-processing to the data and saving it into a pickle file
+# pre.imageProcessingTwoFilters(train_data, pre.brightness, pre.contrast, 80)
+# pickle.dump(pre.imageProcessingTwoFilters(test_data, pre.brightness, pre.contrast, 80), open("pre_test_mat.pck", "wb"))
 
 
 
 # ---------------------------------
-#learning function : appends every images into separate lists
-#and computes the average of the class
-def averageLearningVector(data):
+#learning function : loads the model (see dmin.py for more information)
+def averageLearningVector():
+	print("\n---averageLearningVector: loading the model from pickle")
+	return pickle.load(open("pre_train_class.pck", "rb"))
 
-	print("\n---averageLearningVector: start")
-
-	avgVector = {}
-	allClassVectors = [[] for i in range(10)] #create 10 lists for the 10 classes
-
-	# putting the images into their own class depending on their label
-	# time taken: approx. 0.35s 
-	for i in range(len(data['y'])):
-		allClassVectors[data['y'][i]-1].append(data['X'][:, :, :, i])
-
-
-	# computing the average of the vectors
-	# time taken: approx. 41s. This part takes the longest
-	for i in range(10):
-		if len(allClassVectors[i]) != 0:
-			avgVector[i+1] = np.average(allClassVectors[i], axis=0)
-
-	print("---averageLearningVector: end")
-
-	return avgVector
 
 
 # ---------------------------------
@@ -60,22 +38,19 @@ def findLabel(picture, averageLearningVector):
 		if np.linalg.norm(picture - averageLearningVector[i]) < frobeniusNorm:
 			frobeniusNorm = np.linalg.norm(picture - averageLearningVector[i])
 			label = i
-
-
-
 	return label
 
 
 
 # ---------------------------------
-#
-def minimumDistanceClassifier(test, train):
+#main classifier function
+def minimumDistanceClassifier(test):
 
 	print("\n-minimumDistanceClassifier: start")
 
 	success = 0
-	avgVector = averageLearningVector(train)
-	print("--findLabel: finding the distance between the data and the model. Start")
+	avgVector = averageLearningVector()
+	print("--findLabel: finding the distance between the data and the model")
 
 	for i in range(len(test["y"])):
 		label = findLabel(test["X"][:, :, :, i], avgVector)
@@ -83,15 +58,12 @@ def minimumDistanceClassifier(test, train):
 			success += 1
 
 	print("--findLabel: end")
-
 	print("-minimumDistanceClassifier: end")
-
 	return success
 
 
-
 # ---------------------------------
-# Main
+# main
 if __name__ == "__main__":
 	
 	
@@ -99,7 +71,7 @@ if __name__ == "__main__":
 	
 	start = time.time()
 
-	success = minimumDistanceClassifier(test_data, train_data)
+	success = minimumDistanceClassifier(test_data)
 	successPercentage =  100.*success/len(test_data["y"])
 
 	print("\ndmin.py: Success rate : " + str(success) + " / " 

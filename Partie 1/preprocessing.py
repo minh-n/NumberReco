@@ -124,6 +124,21 @@ def imageProcessing(data, filter, setting=None):
 			filter(data['X'][:, :, :, i], setting)
 
 
+def imageProcessingTwoFilters(data, filter1, filter2, setting=None):
+	print("--preprocessing.py: processing dataset with {} and {}".format(str(filter1), str(filter2)))
+	if setting is None:
+		 #data['y'])
+		for i in range(3000):
+			#print("Processing {}...".format(i))
+			filter1(data['X'][:, :, :, i])
+			filter2(data['X'][:, :, :, i])
+	else:
+		for i in  range(3000):
+			#print("Processing {}...".format(i))
+			filter1(data['X'][:, :, :, i], setting)
+			filter2(data['X'][:, :, :, i])
+	return data
+
 # if __name__ == "__main__":
 	
 # 	index = 1
