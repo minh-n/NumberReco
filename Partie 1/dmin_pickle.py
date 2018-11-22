@@ -14,9 +14,17 @@ print("dmin.py: starting program\ndmin.py: loading train data")
 # Loading the data (saved by pickle)
 test_data = pickle.load(open("pre_test_mat.pck", "rb"))
 
+
+
+# ---------------------------------
 # Applying pre-processing to the data and saving it into a pickle file
-# pre.imageProcessingTwoFilters(train_data, pre.brightness, pre.contrast, 80)
-# pickle.dump(pre.imageProcessingTwoFilters(test_data, pre.brightness, pre.contrast, 80), open("pre_test_mat.pck", "wb"))
+# Uncomment this to run the pre-processing
+
+# train_data = loadmat('train_32x32.mat')
+# pre.imageProcessingTwoFilters(train_data, pre.brightness, pre.contrast, 6000, 80)
+
+# train_data = loadmat('test_32x32.mat')
+# pickle.dump(pre.imageProcessingTwoFilters(test_data, pre.brightness, pre.contrast, 6000, 80), open("pre_test_mat.pck", "wb"))
 
 
 
@@ -43,7 +51,7 @@ def findLabel(picture, averageLearningVector):
 
 
 # ---------------------------------
-#main classifier function
+# main classifier function
 def minimumDistanceClassifier(test):
 
 	print("\n-minimumDistanceClassifier: start")
@@ -58,8 +66,9 @@ def minimumDistanceClassifier(test):
 			success += 1
 
 	print("--findLabel: end")
-	print("-minimumDistanceClassifier: end")
+	print("-\nminimumDistanceClassifier: end")
 	return success
+
 
 
 # ---------------------------------
@@ -77,10 +86,9 @@ if __name__ == "__main__":
 	print("\ndmin.py: Success rate : " + str(success) + " / " 
 		+ str(len(test_data["y"])) + 
 		" (" + str(successPercentage) + "%)")
-	#classes = initializeClasses(train_data)
 
 	end = time.time()
 
 	total = end - start
-	print("dmin.py: Time taken: " + str(total) + " sec.")
+	print("\ndmin.py: Time taken: " + str(total) + " sec.\n\n")
 	
