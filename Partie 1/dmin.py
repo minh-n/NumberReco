@@ -38,7 +38,6 @@ def averageLearningVector(data):
 	for i in range(len(data['y'])):
 		allClassVectors[data['y'][i]-1].append(data['X'][:, :, :, i])
 
-
 	# computing the average of the vectors
 	# time taken: approx. 41s. This part takes the longest
 	for i in range(10):

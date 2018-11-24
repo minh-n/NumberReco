@@ -126,6 +126,10 @@ def imageProcessing(data, filter, setting=None):
 
 def imageProcessingTwoFilters(data, filter1, filter2, imageLimit, setting=None):
 	print("--preprocessing.py: processing dataset with {} and {}".format(str(filter1), str(filter2)))
+	
+	if(len(data["y"]) < imageLimit):
+		imageLimit = len(test_data["y"]) 
+
 	if setting is None:
 		for i in range(imageLimit):
 			print("Processing {}...".format(i))

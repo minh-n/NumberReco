@@ -110,15 +110,15 @@ if __name__ == "__main__":
 
 	# **********
 	# program settings
-	imageLimit = 500 # can be = len(train_data['y']) to process ALL the data
+	imageLimit = 7000 # can be = len(train_data['y']) to process ALL the data
 
 	computePreprocessing = True
-	
-	train_filename = "train_pre_500.pck"
-	test_filename = "test_pre_500.pck"
 
-	filter1 = pre.highPassFilter
-	filter2 = pre.contrast
+	train_filename = "train_pre_7000.pck"
+	test_filename = "test_pre_7000.pck"
+
+	filter1 = pre.histogramEqualization
+	filter2 = pre.sobelFilter
 	# **********
 
 
@@ -133,6 +133,7 @@ if __name__ == "__main__":
 	avgVector = loadAverageLearningVector(train_filename)
 
 	# **********
+
 
 
 
@@ -161,3 +162,8 @@ if __name__ == "__main__":
 	total = end - start
 	print("\ndmin.py: Time taken: " + str(total) + " sec.\n\n")
 	# **********
+
+
+
+
+
