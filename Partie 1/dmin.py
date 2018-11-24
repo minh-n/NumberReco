@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
 import time 
-import preprocessing as pre
-import pickle
 
 # ---------------------------------
 # Loading the datasets 
