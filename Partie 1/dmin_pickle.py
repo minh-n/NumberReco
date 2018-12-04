@@ -22,15 +22,16 @@ def loadTestDataFromPickle(test_filename):
 # Applying pre-processing to the data and saving it into a pickle file
 # We are only saving the test data, as the train data is going to be saved into
 # classes (much lighter pickle files)
-def applyPreprocessing(test_filename, filter1, filter2, imageLimit):
+def applyPreprocessing(test_filename, filter1, filter2, filter3, imageLimit):
 
 	test_data = loadmat('test_32x32.mat')
-	pickle.dump(pre.imageProcessingTwoFilters(test_data, filter1, filter2, imageLimit), open(test_filename, "wb"))
-
+	pickle.dump(pre.imageProcessingThreeFilters(test_data, filter1, filter2, filter3, imageLimit, 100), open(test_filename, "wb"))
+	
 	train_data = loadmat('train_32x32.mat')
-	pre.imageProcessingTwoFilters(train_data, filter1, filter2, imageLimit)
+	pre.imageProcessingThreeFilters(train_data, filter1, filter2, filter3, imageLimit, 100)
 
-	return test_data, train_data
+	return train_data
+
 
 
 # ---------------------------------
@@ -110,15 +111,17 @@ if __name__ == "__main__":
 
 	# **********
 	# program settings
-	imageLimit = 7000 # can be = len(train_data['y']) to process ALL the data
+	imageLimit = 400 # can be = len(train_data['y']) to process ALL the data
 
 	computePreprocessing = True
 
-	train_filename = "train_pre_7000.pck"
-	test_filename = "test_pre_7000.pck"
+	train_filename = "train_full_new_hsb.pck"
+	test_filename = "test_full_new_hsb.pck"
 
 	filter1 = pre.histogramEqualization
 	filter2 = pre.sobelFilter
+	filter3 = pre.brightness
+
 	# **********
 
 
@@ -126,7 +129,7 @@ if __name__ == "__main__":
 	# **********
 	# this part creates the models and loads the necessary files
 	if(computePreprocessing):
-		test_data, train_data = applyPreprocessing(test_filename, filter1, filter2, imageLimit)
+		train_data = applyPreprocessing(test_filename, filter1, filter2, filter3, imageLimit)
 		saveAverageLearningVector(train_data, train_filename, imageLimit)
 
 	test_data = loadTestDataFromPickle(test_filename) 

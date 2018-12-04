@@ -5,3 +5,4 @@ train_32x32.mat
 *.mat
 *.pyc
 *.pck
+*.pyc
