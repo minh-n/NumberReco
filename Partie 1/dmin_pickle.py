@@ -22,13 +22,13 @@ def loadTestDataFromPickle(test_filename):
 # Applying pre-processing to the data and saving it into a pickle file
 # We are only saving the test data, as the train data is going to be saved into
 # classes (much lighter pickle files)
-def applyPreprocessing(test_filename, filter1, filter2, filter3, imageLimit):
+def applyPreprocessing(test_filename, filter1, filter2, imageLimit):
 
 	test_data = loadmat('test_32x32.mat')
-	pickle.dump(pre.imageProcessingThreeFilters(test_data, filter1, filter2, filter3, imageLimit, 100), open(test_filename, "wb"))
+	pickle.dump(pre.imageProcessingTwoFilters(test_data, filter1, filter2, imageLimit, 50), open(test_filename, "wb"))
 	
 	train_data = loadmat('train_32x32.mat')
-	pre.imageProcessingThreeFilters(train_data, filter1, filter2, filter3, imageLimit, 100)
+	pre.imageProcessingTwoFilters(train_data, filter1, filter2, imageLimit, 50)
 
 	return train_data
 
@@ -82,21 +82,27 @@ def findLabel(picture, averageLearningVector):
 
 # ---------------------------------
 # main classifier function
-def minimumDistanceClassifier(avgVector, test, imageLimit):
+def minimumDistanceClassifier(avgVector, test_data, imageLimit):
 
 	print("\n-minimumDistanceClassifier: start")
 
-	success = 0
+	successTotal = 0
+	successPerClass = [0]*11
+	numberOfImagePerClass = [0]*11
 	print("--findLabel: finding the distance between the data and the model")
 
 	for i in range(imageLimit):
-		label = findLabel(test["X"][:, :, :, i], avgVector)
-		if label == test["y"][i]:
-			success += 1
+		label = findLabel(test_data["X"][:, :, :, i], avgVector)
+		numberOfImagePerClass[label] += 1
+		if label == test_data["y"][i]:
+			successTotal += 1
+			successPerClass[label] += 1
 
+	successPerClass[0] = successPerClass[10]
+	numberOfImagePerClass[0] = numberOfImagePerClass[10]
 	print("--findLabel: end")
-	print("-\nminimumDistanceClassifier: end")
-	return success
+	print("-\nminimumDistanceClassifier: end\n")
+	return successTotal, successPerClass, numberOfImagePerClass
 
 
 
@@ -111,16 +117,16 @@ if __name__ == "__main__":
 
 	# **********
 	# program settings
-	imageLimit = 400 # can be = len(train_data['y']) to process ALL the data
+	imageLimit = 73257 # can be = 73257 to process ALL the data
 
 	computePreprocessing = True
 
-	train_filename = "train_full_new_hsb.pck"
-	test_filename = "test_full_new_hsb.pck"
+	train_filename = "./trainPickle/train9.pck"
+	test_filename = "./testPickle/test9.pck"
 
-	filter1 = pre.histogramEqualization
-	filter2 = pre.sobelFilter
-	filter3 = pre.brightness
+	filter1 = pre.brightness
+	filter2 = pre.highPassFilter
+	#filter3 = pre.brightness
 
 	# **********
 
@@ -129,7 +135,7 @@ if __name__ == "__main__":
 	# **********
 	# this part creates the models and loads the necessary files
 	if(computePreprocessing):
-		train_data = applyPreprocessing(test_filename, filter1, filter2, filter3, imageLimit)
+		train_data = applyPreprocessing(test_filename, filter1, filter2, imageLimit)
 		saveAverageLearningVector(train_data, train_filename, imageLimit)
 
 	test_data = loadTestDataFromPickle(test_filename) 
@@ -141,29 +147,31 @@ if __name__ == "__main__":
 
 
 	# **********
-	# classify the test data
+	# classify the test data and displaying the results
 
-	if len(test_data["y"]) > imageLimit:
-		success = minimumDistanceClassifier(avgVector, test_data, imageLimit)
-		successPercentage =  100.*success/imageLimit
+	if len(test_data["y"]) < imageLimit:
+		imageLimit = len(test_data["y"]) 
 
-		#display the success rate
-		print("\ndmin.py: Success rate : " + str(success) + " / " 
-			+ str(imageLimit) + 
-			" (" + str(successPercentage) + "%)")
-	else:
-		success = minimumDistanceClassifier(avgVector, test_data, len(test_data["y"]))
-		successPercentage =  100.*success/len(test_data["y"]) 
+	successTotal, successPerClass, numberOfImagePerClass = minimumDistanceClassifier(avgVector, test_data, imageLimit)
+	successPercentage =  100.*successTotal/imageLimit
 
-		#display the success rate
-		print("\ndmin.py: Success rate : " + str(success) + " / " 
-			+ str(len(test_data["y"])) + 
-			" (" + str(successPercentage) + "%)")
+	#display the success rate for each class
+	print("-----------------\nDisplaying the final results\n-----------------\n")
+	for i in range(10):
+		successPercentage =  100.*successPerClass[i]/numberOfImagePerClass[i] 
+		print("---Success rate for " + str(i) + ": " + str(successPerClass[i]) + " / " 
+		+ str(numberOfImagePerClass[i]) + 
+		" (" + str(successPercentage) + "%)")
+
+	#display the success rate
+	print("\ndmin.py: Total success rate : " + str(successTotal) + " / " 
+		+ str(imageLimit) + 
+		" (" + str(successPercentage) + "%)")
 
 	end = time.time()
 
 	total = end - start
-	print("\ndmin.py: Time taken: " + str(total) + " sec.\n\n")
+	print("dmin.py: Time taken: " + str(total) + " sec.\n")
 	# **********
 
 

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.io import loadmat
 from scipy import signal
 
-#train_data = loadmat('train_32x32.mat')
+train_data = loadmat('train_32x32.mat')
 #test_data = loadmat('test_32x32.mat')
 
 def negative(picture):
@@ -128,7 +128,7 @@ def imageProcessingTwoFilters(data, filter1, filter2, imageLimit, setting=None):
 	print("--preprocessing.py: processing dataset with {} and {}".format(str(filter1), str(filter2)))
 	
 	if(len(data["y"]) < imageLimit):
-		imageLimit = len(test_data["y"]) 
+		imageLimit = len(data["y"]) 
 
 	if setting is None:
 		for i in range(imageLimit):
@@ -142,21 +142,47 @@ def imageProcessingTwoFilters(data, filter1, filter2, imageLimit, setting=None):
 			filter2(data['X'][:, :, :, i])
 	return data
 
-# if __name__ == "__main__":
+def imageProcessingThreeFilters(data, filter1, filter2, filter3, imageLimit, setting=None):
+	print("--preprocessing.py: processing dataset with {} and {}".format(str(filter1), str(filter2)))
 	
-# 	index = 1
-# 	# plt.imshow(train_data['X'][:, :, :, index])
-# 	# plt.show()
-# 	# negative(train_data['X'][:, :, :, index])
-# 	# grey(train_data['X'][:, :, :, index])
-# 	# thresholding(train_data['X'][:, :, :, index])
-# 	# lowPassFilter(train_data['X'][:, :, :, index])
-# 	# highPassFilter(train_data['X'][:, :, :, index])
-# 	# gradient(train_data['X'][:, :, :, index])
-# 	# sobelFilter(train_data['X'][:, :, :, index])
-# 	# brightness(train_data['X'][:, :, :, index], 80)
-# 	# contrast(train_data['X'][:, :, :, index])
-# 	# imageProcessing(train_data, contrast)
-# 	histogramEqualization(train_data['X'][:, :, :, index])
-# 	plt.imshow(train_data['X'][:, :, :, index])
-# 	# plt.show()
+	if(len(data["y"]) < imageLimit):
+		imageLimit = len(data["y"]) 
+
+	if setting is None:
+		for i in range(imageLimit):
+			print("Processing {}...".format(i))
+			filter1(data['X'][:, :, :, i])
+			filter2(data['X'][:, :, :, i])
+			filter3(data['X'][:, :, :, i])
+
+	else:
+		for i in range(imageLimit):
+			print("Processing {}...".format(i))
+			filter1(data['X'][:, :, :, i])
+			filter2(data['X'][:, :, :, i])
+			filter3(data['X'][:, :, :, i], setting)
+
+	return data
+
+if __name__ == "__main__":
+	
+	index = 1909
+	plt.imshow(train_data['X'][:, :, :, index])
+	plt.show()
+	# negative(train_data['X'][:, :, :, index])
+	# grey(train_data['X'][:, :, :, index])
+	# thresholding(train_data['X'][:, :, :, index])
+	lowPassFilter(train_data['X'][:, :, :, index])
+	highPassFilter(train_data['X'][:, :, :, index]) #messy pixels
+	# gradient(train_data['X'][:, :, :, index])
+	# sobelFilter(train_data['X'][:, :, :, index])  #messy pixels
+	# brightness(train_data['X'][:, :, :, index], 60)
+	#contrast(train_data['X'][:, :, :, index]) 
+	# imageProcessing(train_data, contrast)
+	# histogramEqualization(train_data['X'][:, :, :, index])
+	plt.imshow(train_data['X'][:, :, :, index])
+	plt.show()
+
+
+
+
