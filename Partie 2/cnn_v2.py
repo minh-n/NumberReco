@@ -12,11 +12,11 @@ torch.manual_seed(0) #on set le seed a 0, pas d'aleatoire
 # Reseau de type convolutionnel classique
 class CNN(nn.Module):
 
-	#la fonction init permet d’initialiser le reseau de neurones (le modele).
+    #la fonction init permet d’initialiser le reseau de neurones (le modele).
     def __init__(self):
         super(CNN, self).__init__()
-		
-		#ici, on definit 4 couches de neurones : 2 convolutions et 2 lineaires
+        
+        #ici, on definit 4 couches de neurones : 2 convolutions et 2 lineaires
         # Les arguments de conv2D : conv2d(in_channels, out_channels, kernel_size)
 
         # Applies a 2D convolution over an input signal composed of several input planes.
@@ -27,8 +27,8 @@ class CNN(nn.Module):
         self.fc1 = nn.Linear(1250, 500)
         self.fc2 = nn.Linear(500, 10)
 
-   	# Ist's the forward function that defines the network structure.
-   	# In the forward function, you define how your model is going to be run, from input to output.
+    # Ist's the forward function that defines the network structure.
+    # In the forward function, you define how your model is going to be run, from input to output.
     def forward(self, x):
         x = F.relu(F.max_pool2d(self.conv1(x), 2))
         x = F.relu(F.max_pool2d(self.conv2(x), 2))
@@ -49,8 +49,8 @@ class LeNet(nn.Module):
     def __init__(self):
         super(LeNet, self).__init__()
  
- 		# La premiere couche contient 6 filtres de convolution de taille 5 × 5 
- 		# avec une fonction d’activation de type ReLU et un max pooling de dimension 2 × 2.
+        # La premiere couche contient 6 filtres de convolution de taille 5 × 5 
+        # avec une fonction d’activation de type ReLU et un max pooling de dimension 2 × 2.
         self.conv1 = nn.Conv2d(3, 6, 5)
 
         # La deuxieme couche contient 16 filtres de convolution de taille 5 × 5
@@ -61,7 +61,7 @@ class LeNet(nn.Module):
         # 16*5*5 = 16 input de 5*5 (a cause du flatten)
         self.fc1 = nn.Linear(16*5*5, 120)
 
-		# La quatrieme couche fully connected contient 84 neurones avec une fonction d’activation de type ReLU (defini dans forward()).
+        # La quatrieme couche fully connected contient 84 neurones avec une fonction d’activation de type ReLU (defini dans forward()).
         self.fc2 = nn.Linear(120, 84)
 
         # La derniere couche fully connected contient 10 neurones avec une fonction log-softmax (defini dans forward()).
@@ -80,16 +80,16 @@ class LeNet(nn.Module):
         return x
 
 #--------------------------------------------------
-# Reseau de type MultiLater Perceptron
+# Reseau de type MultiLater Perceptron (pas de conv2D)
 class MLP(nn.Module):
 
     def __init__(self):
         super(MLP, self).__init__()
 
-        self.fc1 = nn.Linear(32*32*3, 32*16*3)
-        self.fc2 = nn.Linear(32*16*3, 16*16*3)
-        self.fc3 = nn.Linear(16*16*3, 200)
-        self.fc4 = nn.Linear(200, 10)
+        self.fc1 = nn.Linear(3072, 1000)
+        self.fc2 = nn.Linear(1000, 500)
+        self.fc3 = nn.Linear(500, 250)
+        self.fc4 = nn.Linear(250, 10)
 
     def forward(self, x):
         x = x.contiguous().view(x.shape[0], -1) # Flatten the tensor
@@ -99,6 +99,18 @@ class MLP(nn.Module):
         x = F.log_softmax(self.fc4(x), dim=1)
 
         return x
+
+#--------------------------------------------------
+# Calcule le taux de succes
+def computeSuccess(class_predicted, label, test_size):
+    success = 0
+
+    for i in range(0, len(class_predicted)):
+        if(class_predicted[i] == label[i]):
+            success += 1
+
+    return success*100/test_size
+
 
 #--------------------------------------------------
 # Main du programme
@@ -113,7 +125,7 @@ if __name__ == '__main__':
     train_size = 1000
     test_size = 100
 
-	# On recupere les train_size premieres etiquettes de donnees
+    # On recupere les train_size premieres etiquettes de donnees
     train_label = train_data['y'][:train_size]
 
     #Renvoie tous les elements de la liste avec idClass = 10
@@ -122,7 +134,7 @@ if __name__ == '__main__':
     #On cast la train_label en int64 puis on le squeeze pour retirer une dimension de la liste (la dimension inutile qui restait)
     train_label = torch.from_numpy(train_label.astype('int64')).squeeze(1)
     
-   	#On permute les axes de données pour avoir l'ordre idClass, rgb, ligne, col
+    #On permute les axes de données pour avoir l'ordre idClass, rgb, ligne, col
     train_data = torch.from_numpy(train_data['X'].astype('float32')).permute(3, 2, 0, 1)[:train_size]
 
     # memes operations que train_data, pour test_data 
@@ -135,7 +147,7 @@ if __name__ == '__main__':
     # Hyperparameters
     epoch_nbr = 10
     batch_size = 10
-    learning_rate = 0.001 #a l'origine 1e1, mais il nous faut un learning rate < 1
+    learning_rate = 1e-3 #a l'origine 1e1, mais il nous faut un learning rate < 1
 
     #--------------------------------------------------
     net = CNN() #indique quel genre de reseau on utilise (CNN, MLP ou LeNet)
@@ -173,17 +185,11 @@ if __name__ == '__main__':
             optimizer.step() # Perform the weights update
 
             #--------------------------------------------------
-     		# verifier la precision des donnes d'entrainement
+            # verifier la precision des donnes d'entrainement
             predictions_train = net(train_data[0:test_size])
             _, class_predicted = torch.max(predictions_train, 1)
-            success = 0
 
-            for i in range(0, len(class_predicted)):
-                if(class_predicted[i] == train_label[i]):
-                    success += 1
-
-            success = success*100/test_size
-
+            success = computeSuccess(class_predicted, train_label, test_size)
             train_in_each_epoch.append(success)
             print("Train success : " + str(success) + "%.")
 
@@ -192,12 +198,7 @@ if __name__ == '__main__':
             predictions_test = net(test_data[0:test_size])
             _, class_predicted = torch.max(predictions_test, 1)
 
-            success = 0
-            for i in range(0, len(class_predicted)):
-                if(class_predicted[i] == test_label[i]):
-                    success += 1
-
-            success = success*100/test_size
+            success = computeSuccess(class_predicted, test_label, test_size)
             test_in_each_epoch.append(success)
             print("Test success : " + str(success) + "%.")
 
@@ -212,7 +213,4 @@ if __name__ == '__main__':
     plt.plot(train_success)
 
     plt.show()
-
-
-
 
