@@ -20,8 +20,26 @@ def grey(picture):
 	for i in range(lines):
 		for j in range(columns):
 			grey = 0.299*picture[i, j, 0] + 0.587*picture[i, j, 1] + 0.114*picture[i, j, 2]
+			picture[i, j, :] = [grey for i in range(colors)]
+
+def avg_color(mat):
+	lines, columns, _ = mat.shape
+	avg = 0
+	for i in range (lines):
+		for j in range(columns):
+			avg += int(np.mean(mat[i][j]))
+	avg /= (lines*columns)
+	return avg
+
+def thresholdingV2(picture):
+	(lines, columns, colors) = np.shape(picture)
+
+	avg = avg_color(picture)
+
+	for i in range(lines):
+		for j in range(columns):
 			for c in range(colors):
-				picture[i, j, c] = grey
+				picture[i, j, c] = 255 if picture[i, j, c] > avg else 0
 
 def thresholding(picture):
 	(lines, columns, colors) = np.shape(picture)
@@ -132,12 +150,12 @@ def imageProcessingTwoFilters(data, filter1, filter2, imageLimit, setting=None):
 
 	if setting is None:
 		for i in range(imageLimit):
-			print("Processing {}...".format(i))
+			#print("Processing {}...".format(i))
 			filter1(data['X'][:, :, :, i])
 			filter2(data['X'][:, :, :, i])
 	else:
 		for i in range(imageLimit):
-			print("Processing {}...".format(i))
+			#print("Processing {}...".format(i))
 			filter1(data['X'][:, :, :, i], setting)
 			filter2(data['X'][:, :, :, i])
 	return data
@@ -150,14 +168,14 @@ def imageProcessingThreeFilters(data, filter1, filter2, filter3, imageLimit, set
 
 	if setting is None:
 		for i in range(imageLimit):
-			print("Processing {}...".format(i))
+			#print("Processing {}...".format(i))
 			filter1(data['X'][:, :, :, i])
 			filter2(data['X'][:, :, :, i])
 			filter3(data['X'][:, :, :, i])
 
 	else:
 		for i in range(imageLimit):
-			print("Processing {}...".format(i))
+			#print("Processing {}...".format(i))
 			filter1(data['X'][:, :, :, i])
 			filter2(data['X'][:, :, :, i])
 			filter3(data['X'][:, :, :, i], setting)

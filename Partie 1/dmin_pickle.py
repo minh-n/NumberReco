@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
 import time 
-import preprocessing as pre
+import preprocessinga as pre
 import pickle
 
 
@@ -25,10 +25,10 @@ def loadTestDataFromPickle(test_filename):
 def applyPreprocessing(test_filename, filter1, filter2, imageLimit):
 
 	test_data = loadmat('test_32x32.mat')
-	pickle.dump(pre.imageProcessingTwoFilters(test_data, filter1, filter2, imageLimit, 50), open(test_filename, "wb"))
+	pickle.dump(pre.imageProcessingTwoFilters(test_data, filter1, filter2, imageLimit), open(test_filename, "wb"))
 	
 	train_data = loadmat('train_32x32.mat')
-	pre.imageProcessingTwoFilters(train_data, filter1, filter2, imageLimit, 50)
+	pre.imageProcessingTwoFilters(train_data, filter1, filter2, imageLimit)
 
 	return train_data
 
@@ -117,15 +117,15 @@ if __name__ == "__main__":
 
 	# **********
 	# program settings
-	imageLimit = 73257 # can be = 73257 to process ALL the data
+	imageLimit = 5000 # can be = 73257 to process ALL the data
 
 	computePreprocessing = True
 
-	train_filename = "./trainPickle/train9.pck"
-	test_filename = "./testPickle/test9.pck"
+	train_filename = "./trainPickle/traingreythresh.pck"
+	test_filename = "./testPickle/testgreythresh.pck"
 
-	filter1 = pre.brightness
-	filter2 = pre.highPassFilter
+	filter1 = pre.grey
+	filter2 = pre.thresholdingV2
 	#filter3 = pre.brightness
 
 	# **********
@@ -164,6 +164,8 @@ if __name__ == "__main__":
 		" (" + str(successPercentage) + "%)")
 
 	#display the success rate
+	successPercentage =  100.*successTotal/imageLimit
+
 	print("\ndmin.py: Total success rate : " + str(successTotal) + " / " 
 		+ str(imageLimit) + 
 		" (" + str(successPercentage) + "%)")
