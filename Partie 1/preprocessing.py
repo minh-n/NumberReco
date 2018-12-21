@@ -161,7 +161,7 @@ def imageProcessingTwoFilters(data, filter1, filter2, imageLimit, setting=None):
 	return data
 
 def imageProcessingThreeFilters(data, filter1, filter2, filter3, imageLimit, setting=None):
-	print("--preprocessing.py: processing dataset with {} and {}".format(str(filter1), str(filter2)))
+	print("--preprocessing.py: processing dataset with {}, {} and {}".format(str(filter1), str(filter2), str(filter3)))
 	
 	if(len(data["y"]) < imageLimit):
 		imageLimit = len(data["y"]) 

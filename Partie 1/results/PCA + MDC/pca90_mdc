@@ -1,0 +1,18 @@
+-----------------
+Displaying the final results
+-----------------
+
+---Success rate for 0: 153 / 1193 (12.824811399832356%)
+---Success rate for 1: 133 / 670 (19.850746268656717%)
+---Success rate for 2: 734 / 4004 (18.331668331668332%)
+---Success rate for 3: 38 / 472 (8.05084745762712%)
+---Success rate for 4: 306 / 1541 (19.857235561323815%)
+---Success rate for 5: 46 / 628 (7.32484076433121%)
+---Success rate for 6: 196 / 5011 (3.9113949311514666%)
+---Success rate for 7: 898 / 11638 (7.716102423096752%)
+---Success rate for 8: 49 / 376 (13.03191489361702%)
+---Success rate for 9: 18 / 499 (3.6072144288577155%)
+Total success rate : 2571 / 73257 (3.5095622261353863%)
+PCA's execution time : 140.64247822761536
+MDC's execution time : 9.562907934188843
+Total time : 150.2053861618042

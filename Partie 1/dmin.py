@@ -34,7 +34,7 @@ def averageLearningVector(data):
 	# putting the images into their own class depending on their label
 	# time taken: approx. 0.35s 
 	for i in range(len(data['y'])):
-		allClassVectors[data['y'][i]-1].append(data['X'][:, :, :, i])
+		allClassVectors[data['y'][i][0]-1].append(data['X'][:, :, :, i])
 
 	# computing the average of the vectors
 	# time taken: approx. 41s. This part takes the longest
